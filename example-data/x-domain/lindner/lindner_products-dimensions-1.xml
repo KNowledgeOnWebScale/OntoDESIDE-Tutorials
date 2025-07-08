@@ -1,0 +1,14 @@
+<dimensions>
+  <dimension>
+    <Measured_product>Nortec_1234</Measured_product>
+    <Length>600</Length>
+    <Width>600</Width>
+    <Height>45</Height>
+  </dimension>
+  <dimension>
+    <Measured_product>pedestal_1234</Measured_product>
+    <Length>600</Length>
+    <Width>600</Width>
+    <Height>2000</Height>
+  </dimension>
+</dimensions>

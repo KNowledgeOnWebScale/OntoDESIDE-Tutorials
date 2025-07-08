@@ -1,0 +1,87 @@
+prefixes:
+  ceon-product: http://w3id.org/CEON/ontology/product/
+  ceon-quantity: http://w3id.org/CEON/ontology/quantity/
+  construction: http://w3id.org/CEON/demo/construction/
+  e: http://myontology.com/
+  ex: http://example.com/
+  grel: http://users.ugent.be/~bjdmeest/function/grel.ttl#
+  idlab-fn: https://w3id.org/imec/idlab/function#
+  qudt: http://qudt.org/schema/qudt/
+  qudt-quantitykind: http://qudt.org/vocab/quantitykind/
+  qudt-unit: http://qudt.org/vocab/unit/
+
+mappings:
+  products:
+    graphs: ex:Products
+    sources:
+      - [lindner_products-1.csv~csv]
+    s: ex:$(Product id)
+    po:
+      - [ a, ceon-product:Product~iri ]
+      - [ rdfs:label, $(Product Name) ]
+      - p: construction:hasTakeBackProgramFromOriginalManufacturer
+        o:
+          function: idlab-fn:equal
+          parameters:
+            - [ grel:valueParameter, $(Take back program original manufacturer) ]
+            - [ grel:valueParameter2, YES ]
+          datatype: xsd:boolean
+      - [ e:minimumStockCount, $(Minimum stock count), xsd:integer ]
+      - [ e:hasProductDescription, $(Product description), en~lang ]
+      - p: ceon-quantity:hasLength
+        o:
+          mapping: length
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(Product id), s]
+              - [str2, $(Measured_product), o]
+        g: ex:Dimensions
+      - p: ceon-quantity:hasWidth
+        o:
+          mapping: width
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(Product id), s]
+              - [str2, $(Measured_product), o]
+        g: ex:Dimensions
+      - p: ceon-quantity:hasHeight
+        o:
+          mapping: height
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(Product id), s]
+              - [str2, $(Measured_product), o]
+        g: ex:Dimensions
+  length:
+    graphs: ex:Dimensions
+    sources:
+      - ['lindner_products_dimensions-1.csv~csv']
+    s:
+      value: ex:$(Measured_product)-length
+    po:
+      - [ a, [ceon-quantity:Length~iri, qudt:QuantityValue~iri ] ]
+      - [ qudt:numericValue, $(Length), xsd:double ]
+      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
+  width:
+    graphs: ex:Dimensions
+    sources:
+      - ['lindner_products_dimensions-1.csv~csv']
+    s:
+      value: ex:$(Measured_product)-width
+    po:
+      - [ a, [ceon-quantity:Width~iri, qudt:QuantityValue~iri ] ]
+      - [ qudt:numericValue, $(Width), xsd:double ]
+      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
+  height:
+    graphs: ex:Dimensions
+    sources:
+      - ['lindner_products_dimensions-1.csv~csv']
+    s:
+      value: ex:$(Measured_product)-height
+    po:
+      - [ a, [ceon-quantity:Height~iri, qudt:QuantityValue~iri ] ]
+      - [ qudt:numericValue, $(Height), xsd:double ]
+      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
