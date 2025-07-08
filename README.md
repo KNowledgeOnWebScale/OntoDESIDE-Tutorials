@@ -1,93 +1,106 @@
 # Mapping tutorial
 
+Welcome to this Onto-DESIDE specific tutorial on mapping with [YARRRML](https://rml.io/yarrrml/).
 
+This tutorial is illustrated with Onto-DESIDE project example data, available from the [Open Circularity Platform](https://github.com/KNowledgeOnWebScale/open-circularity-platform).
 
-## Getting started
+If you just want to read content, visit in this order:
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+* [Getting started](./getting-started.md)
+* [Using targets](./using-targets.md)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+If you want to try out yourself some of the mappings in above content, continue below.
 
-## Add your files
+## The working environment
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/topics/git/add_files/#add-files-to-a-git-repository) or push an existing Git repository with the following command:
+We provide:
 
+* A guided installation method to provide you with [YARRRML parser](https://github.com/RMLio/yarrrml-parser) and [RMLMapper](https://github.com/RMLio/rmlmapper-java) tools,
+  both to run on your local computer.
+* A partial copy of the example data from the [Open Circularity Platform](https://github.com/KNowledgeOnWebScale/open-circularity-platform).
+* A [Solid Community Server (CSS)](https://github.com/CommunitySolidServer/CommunitySolidServer) server instance, running on you local computer.
+  This CSS comes preloaded with all the actors of the **Cross-domain evalution 2025** use case.
+
+Note that compared to the online Open Circularity Platform,
+all URI's of the format `https://onto-deside.ilabt.imec.be/css12/<etc>` are replaced here with `http://localhost:3012/<etc>`.
+
+Also note that you will be able to look inside the data on the CSS at `./local-run/data/css12`.
+
+### Prerequisites
+
+* a bash shell in a Linux environment
+* [Node](https://nodejs.org) >= 18 with npm
+* A recent Java version, for example openjdk version "17.0.10"
+
+### Installation
+
+Start by cloning this repository to some directory on your system, from here on simply called `the project root directory`.
+
+All (bash) scripts mentioned here and below should be executed in the project root directory.
+
+Execute:
+
+```bash
+npm install
+npx download-rmlmapper -g v7.3.3 -f rmlmapper.jar
 ```
-cd existing_repo
-git remote add origin https://gitlab.ilabt.imec.be/KNoWS/projects/onto-deside/mapping-tutorial.git
-git branch -M main
-git push -uf origin main
+
+### Usage
+
+#### Local output
+
+To execute a mapping whose output consists of local files only, execute:
+
+```bash
+./map.sh <yarrrml-file-with-relative-path>
 ```
 
-## Integrate with your tools
+Example:
 
-- [ ] [Set up project integrations](https://gitlab.ilabt.imec.be/KNoWS/projects/onto-deside/mapping-tutorial/-/settings/integrations)
+```bash
+./map.sh example-data/x-domain/lindner/mapping-1.yml
+```
 
-## Collaborate with your team
+You'll find the output files at locations as specified in the YARRRML file,
+in directories relative to the path of the YARRRML file.
+For the example, they are in `example-data/x-domain/lindner/`.
+By convention, we give example YARRRML files local output files the extension `.testout`.
+If your YARRRML file specifies output directories, make sure the directories exist before executing.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/user/project/merge_requests/auto_merge/)
+#### HTTP output
 
-## Test and Deploy
+If you want to execute our example mapping writing to web resources, proceed as follows.
 
-Use the built-in continuous integration in GitLab.
+```bash
+# start our supporting CSS; clean start (no history)
+./start-css.sh
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+Now execute a mapping:
 
-***
+```bash
+./map.sh <yarrrml-file-with-relative-path>
+```
 
-# Editing this README
+Example:
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+```bash
+./map.sh example-data/x-domain/lindner/mapping-2.yml
+```
 
-## Suggestions for a good README
+The output is written to a URL `http://localhost:3012/<etc>`, which is in our supporting CSS.
+The supporting CSS is configured so that you can view the web resources as files on your filesystem.
+For the example, they are in `local-run/data/css12/lindner/ceon`.
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+When you're finished, you can stop the CSS as follows:
 
-## Name
-Choose a self-explaining name for your project.
+```bash
+./stop-csss.sh
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+If at some later time you want to restart the CSS with the result of your previous work still there, execute:
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
-
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
-
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
-
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
-
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
-
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
-
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+```bash
+# restart our supporting CSS; with history
+./start-csss.sh -r
+```
