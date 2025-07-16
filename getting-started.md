@@ -143,9 +143,9 @@ YARRRML rules are contained in a [document](http://yaml.org/spec/1.2/spec.html#i
 
 ## Example
 
-Consider the following CSV file called "[lindner_products-1](example-data/x-domain/lindner/lindner_products-1.csv)":
+Consider the following CSV file called "[tutorial_products](example-data/x-domain/lindner/tutorial_products.csv)":
 
-|**Product id**|**Product Name**|**Product description**|**Minimum stock count**|**Take back program original manufacturer**|
+|**Product_id**|**Product Name**|**Product description**|**Minimum stock count**|**Take back program original manufacturer**|
 |--------------|----------------|-----------------------|-----------------------|-------------------------------------------|
 |Nortec_1234|Nortec|"fibre-reinforced calcium sulphate panel, (...)"|100|YES|
 |tile_1234|Calcium sulfate panel||200|YES|
@@ -165,7 +165,7 @@ For example, consider the product described in the first row:
 
 We need to define the IRI (or blank node) that represents this product,
 which will be used in the triples and quads that provide information about this product.
-We will use the concatenation of "<http://example.com/>" and the Product id as IRI.
+We will use the concatenation of "<http://example.com/>" and the Product_id as IRI.
 This results in `ex:Nortec_1234` for this product, when using the prefix `ex` for `http://example.com/`.
 
 We annotate every product with the class `ceon-product:Product` (`http://w3id.org/CEON/ontology/product/Product`).
@@ -275,11 +275,11 @@ We need two or three elements to describe which data is used:
 * how  we refer to the data within the data source (via the key `referenceFormulation`)
 * how we iterate over the data (via the key `iterator`; optional)
 
-The product data in our example is in a CSV file called "lindner_products-1.csv".
+The product data in our example is in a CSV file called "tutorial_products.csv".
 We describe that in YARRRML via
 
 ```yaml
-access: lindner_products-1.csv
+access: tutorial_products.csv
 referenceFormulation: csv
 ```
 
@@ -294,20 +294,20 @@ which is part of `products`:
 mappings:
   products:
     sources:
-      - access: lindner_products-1.csv
+      - access: tutorial_products.csv
         referenceFormulation: csv
 ```
 
-There is also a shorter way to write this: `[lindner_products-1.csv~csv]`.
+There is also a shorter way to write this: `[tutorial_products.csv~csv]`.
 The value of `access` is written before `~` and the value of `referenceFormulation` after.
-Optionally, put the string in quotes to be safe for special characters `['lindner_products-1.csv~csv']`.
+Optionally, put the string in quotes to be safe for special characters `['tutorial_products.csv~csv']`.
 The result is
 
 ```yaml
 mappings:
   products:
     sources:
-      - [lindner_products-1.csv~csv]
+      - [tutorial_products.csv~csv]
 ```
 
 ## How to generate subjects
@@ -320,11 +320,11 @@ We add this definition by adding a new value to `s` (short for [`subjects`](http
 mappings:
   products:
     sources:
-      - ['lindner_products-1.csv~csv']
-    s: ex:$(Product id)
+      - ['tutorial_products.csv~csv']
+    s: ex:$(Product_id)
 ```
 
-The value `ex:$(Product id)` states that the prefix `ex` is concatenated with the value of the column "Product id".
+The value `ex:$(Product_id)` states that the prefix `ex` is concatenated with the value of the column "Product_id".
 The use of `$(...)` allows to use values of the data sources.
 In this case, we can refer to values in the different columns.
 This specific rule results in the following IRIs as subjects for the products: `ex:0`, `ex:1`, `ex:2`, `ex:3`, and `ex:4`.
@@ -342,8 +342,8 @@ This is done by adding a value, with the keys `p` and `o` to [`po`](https://w3id
 mappings:
   products:
     sources:
-      - ['lindner_products-1.csv~csv']
-    s: ex:$(Product id)
+      - ['tutorial_products.csv~csv']
+    s: ex:$(Product_id)
     po:
       - p: a
         o: ceon-product:Product
@@ -383,8 +383,8 @@ the second element the object (`ceon-product:Product`, the value of the key `o`)
 mappings:
   products:
     sources:
-      - ['lindner_products-1.csv~csv']
-    s: ex:$(Product id)
+      - ['tutorial_products.csv~csv']
+    s: ex:$(Product_id)
     po:
       - [a, ceon-product:Product]
 ```
@@ -400,8 +400,8 @@ This is done by adding another array value to `po`.
 mappings:
   products:
     sources:
-      - ['lindner_products-1.csv~csv']
-    s: ex:$(Product id)
+      - ['tutorial_products.csv~csv']
+    s: ex:$(Product_id)
     po:
       - [a, ceon-product:Product]
       - [rdfs:label, $(Product Name)]
@@ -559,14 +559,16 @@ as the datatype of a literal with a language-tag is [predefined](https://www.w3.
 ### How to link two entities
 
 We need to link the dimensions length, width and height with the products.
-Details of the available dimensions can be found in the file "[lindner_products_dimensions-1.csv](example-data/x-domain/lindner/lindner_products_dimensions-1.csv)":
+This information is available in the file "[tutorial_products_dimensions.csv](example-data/x-domain/lindner/tutorial_products_dimensions.csv)":
 
 |**Measured_product**|**Length**|**Width**|**Height**|
 |--------------------|----------|---------|----------|
 |Nortec_1234|600|600|45|
 |pedestal_1234|600|600|2000|
 
-Let's do this first of all for the length.
+The unit used in this file is millimeter.
+
+To simplify the example, we'll only consider length; width and height can be handled similarly.
 
 We define the following rules:
 
@@ -574,7 +576,7 @@ We define the following rules:
 mappings:
   length:
     sources:
-      - ['lindner_products_dimensions-1.csv~csv']
+      - ['tutorial_products_dimensions.csv~csv']
     s:
       value: ex:$(Measured_product)-length
     po:
@@ -604,7 +606,7 @@ ex:pedestal_1234-length a qudt:QuantityValue, ceon-quantity:Length;
 
 We need to link the lengths with the products.
 There is a [relationship](https://w3id.org/yarrrml/spec/#referring-to-other-mappings) established between
-the two via the "Product id" field of a product and the "Measured_product" field of a length.
+the two via the "Product_id" field of a product and the "Measured_product" field of a length.
 Thus, we add the following rules for the products:
 
 ```yaml
@@ -615,7 +617,7 @@ po:
       condition:
         function: equal
         parameters:
-          - [str1, $(Product id), s]
+          - [str1, $(Product_id), s]
           - [str2, $(Measured_product), o]
 ```
 
@@ -627,13 +629,13 @@ We are not able to use the shortcut/array notation to define the predicate and o
 which are identified by the key `length`.
 
 `condition` defines when products and lengths are linked.
-More specific, links are only made when "Product id" of a product _equals_ "Measured_product" of a length.
+More specific, links are only made when "Product_id" of a product _equals_ "Measured_product" of a length.
 
 `function: equals` define that the equal function is used.
 This function has two parameters: `str1` and `str2`.
 Therefore, `parameters` has two elements.
 
-`- [str1, $(Product id), s]` states that the value of "Product id" is coming from
+`- [str1, $(Product_id), s]` states that the value of "Product_id" is coming from
 the subject of the triples (via `s` at the end),
 which is the product, and is used as value for `str1`.
 
@@ -651,96 +653,6 @@ ex:pedestal_1234 ceon-quantity:hasLength ex:pedestal_1234-length .
 
 > Note that for `ex:tile_1234`, `ex:pedestal_glue_1234`, `ex:Nortec_1235` and `ex:acoustic_layer_1235` no triple is generated
 > as lengths for these products is not provided.
-
-We repeat what we did for length now for width and height:
-
-```yaml
-mappings:
-  length:
-    sources:
-      - ['lindner_products_dimensions-1.csv~csv']
-    s:
-      value: ex:$(Measured_product)-length
-    po:
-      - [ a, [ceon-quantity:Length~iri, qudt:QuantityValue~iri ] ]
-      - [ qudt:numericValue, $(Length), xsd:double ]
-      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
-  width:
-    sources:
-      - ['lindner_products_dimensions-1.csv~csv']
-    s:
-      value: ex:$(Measured_product)-width
-    po:
-      - [ a, [ceon-quantity:Width~iri, qudt:QuantityValue~iri ] ]
-      - [ qudt:numericValue, $(Width), xsd:double ]
-      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
-  height:
-    sources:
-      - ['lindner_products_dimensions-1.csv~csv']
-    s:
-      value: ex:$(Measured_product)-height
-    po:
-      - [ a, [ceon-quantity:Height~iri, qudt:QuantityValue~iri ] ]
-      - [ qudt:numericValue, $(Height), xsd:double ]
-      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
-  products:
-    sources:
-      - [lindner_products-1.csv~csv]
-    s: ex:$(Product id)
-    po:
-      - p: ceon-quantity:hasWidth
-        o:
-          mapping: width
-          condition:
-            function: equal
-            parameters:
-              - [str1, $(Product id), s]
-              - [str2, $(Measured_product), o]
-      - p: ceon-quantity:hasHeight
-        o:
-          mapping: height
-          condition:
-            function: equal
-            parameters:
-              - [str1, $(Product id), s]
-              - [str2, $(Measured_product), o]
-```
-
-The following triples are generated.
-
-```turtle
-ex:Nortec_1234-length a qudt:QuantityValue, ceon-quantity:Length;
-  qudt:hasUnit qudt-unit:MilliM;
-  qudt:numericValue 6.0E2 .
-
-ex:Nortec_1234-width a qudt:QuantityValue, ceon-quantity:Width;
-  qudt:hasUnit qudt-unit:MilliM;
-  qudt:numericValue 6.0E2 .
-
-ex:Nortec_1234-height a qudt:QuantityValue, ceon-quantity:Height;
-  qudt:hasUnit qudt-unit:MilliM;
-  qudt:numericValue 4.5E1 .
-
-ex:pedestal_1234-length a qudt:QuantityValue, ceon-quantity:Length;
-  qudt:hasUnit qudt-unit:MilliM;
-  qudt:numericValue 6.0E2 .
-
-ex:pedestal_1234-width a qudt:QuantityValue, ceon-quantity:Width;
-  qudt:hasUnit qudt-unit:MilliM;
-  qudt:numericValue 6.0E2 .
-
-ex:pedestal_1234-height a qudt:QuantityValue, ceon-quantity:Height;
-  qudt:hasUnit qudt-unit:MilliM;
-  qudt:numericValue 2.0E3 .
-
-ex:Nortec_1234 ceon-quantity:hasLength ex:Nortec_1234-length;
-  ceon-quantity:hasWidth ex:Nortec_1234-width;
-  ceon-quantity:hasHeight ex:Nortec_1234-height .
-
-ex:pedestal_1234 ceon-quantity:hasLength ex:pedestal_1234-length;
-  ceon-quantity:hasWidth ex:pedestal_1234-width;
-  ceon-quantity:hasHeight ex:pedestal_1234-height .
-```
 
 ## How to add triples to a graph
 
@@ -766,9 +678,7 @@ The following quads are generated for the first product.
 ex:Nortec_1234 a ceon-product:Product ex:Products .
 ex:Nortec_1234 e:hasProductDescription "fibre-reinforced calcium sulphate panel, (...)"@en ex:Products .
 ex:Nortec_1234 e:minimumStockCount "100"^^<http://www.w3.org/2001/XMLSchema#integer> ex:Products .
-ex:Nortec_1234 ceon-quantity:hasHeight ex:Nortec_1234-height> ex:Products .
 ex:Nortec_1234 ceon-quantity:hasLength ex:Nortec_1234-length> ex:Products .
-ex:Nortec_1234 ceon-quantity:hasWidth ex:Nortec_1234-width> ex:Products .
 ```
 
 ### How to add po-specific triples to a graph
@@ -780,7 +690,7 @@ This is done by adding the key
 eighth element of `po` in the mapping `products,
 together with the corresponding value that defines the graph.
 
-We also added `graphs: ex:Dimensions` to the mappings `length`, `width` and `height`,
+We also added `graphs: ex:Dimensions` to the mapping `length`,
 as learned in [How to add all triples to a graph](#how-to-add-all-triples-to-a-graph).
 
 ```yaml
@@ -799,56 +709,18 @@ mappings:
           condition:
             function: equal
             parameters:
-              - [str1, $(Product id), s]
-              - [str2, $(Measured_product), o]
-        g: ex:Dimensions
-      - p: ceon-quantity:hasWidth
-        o:
-          mapping: width
-          condition:
-            function: equal
-            parameters:
-              - [str1, $(Product id), s]
-              - [str2, $(Measured_product), o]
-        g: ex:Dimensions
-      - p: ceon-quantity:hasHeight
-        o:
-          mapping: height
-          condition:
-            function: equal
-            parameters:
-              - [str1, $(Product id), s]
+              - [str1, $(Product_id), s]
               - [str2, $(Measured_product), o]
         g: ex:Dimensions
   length:
     graphs: ex:Dimensions
     sources:
-      - ['lindner_products_dimensions-1.csv~csv']
+      - ['tutorial_products_dimensions.csv~csv']
     s:
       value: ex:$(Measured_product)-length
     po:
       - [ a, [ceon-quantity:Length~iri, qudt:QuantityValue~iri ] ]
       - [ qudt:numericValue, $(Length), xsd:double ]
-      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
-  width:
-    graphs: ex:Dimensions
-    sources:
-      - ['lindner_products_dimensions-1.csv~csv']
-    s:
-      value: ex:$(Measured_product)-width
-    po:
-      - [ a, [ceon-quantity:Width~iri, qudt:QuantityValue~iri ] ]
-      - [ qudt:numericValue, $(Width), xsd:double ]
-      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
-  height:
-    graphs: ex:Dimensions
-    sources:
-      - ['lindner_products_dimensions-1.csv~csv']
-    s:
-      value: ex:$(Measured_product)-height
-    po:
-      - [ a, [ceon-quantity:Height~iri, qudt:QuantityValue~iri ] ]
-      - [ qudt:numericValue, $(Height), xsd:double ]
       - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
 ```
 
@@ -865,16 +737,6 @@ ex:Nortec_1234-length a qudt:QuantityValue ex:Dimensions .
 ex:Nortec_1234-length a ceon-quantity:Length ex:Dimensions .
 ex:Nortec_1234-length qudt:numericValue "600"^^<http://www.w3.org/2001/XMLSchema#double> ex:Dimensions .
 ex:Nortec_1234-length qudt:hasUnit qudt-unit:MilliM ex:Dimensions .
-ex:Nortec_1234 ceon-quantity:hasWidth ex:Nortec_1234-width ex:Dimensions .
-ex:Nortec_1234-width a qudt:QuantityValue ex:Dimensions .
-ex:Nortec_1234-width a ceon-quantity:Width ex:Dimensions .
-ex:Nortec_1234-width qudt:numericValue "600"^^<http://www.w3.org/2001/XMLSchema#double> ex:Dimensions .
-ex:Nortec_1234-width qudt:hasUnit qudt-unit:MilliM ex:Dimensions .
-ex:Nortec_1234 ceon-quantity:hasHeight ex:Nortec_1234-height ex:Dimensions .
-ex:Nortec_1234-height a qudt:QuantityValue ex:Dimensions .
-ex:Nortec_1234-height a ceon-quantity:Height ex:Dimensions .
-ex:Nortec_1234-height qudt:numericValue "45"^^<http://www.w3.org/2001/XMLSchema#double> ex:Dimensions .
-ex:Nortec_1234-height qudt:hasUnit qudt-unit:MilliM ex:Dimensions .
 ```
 
 ## How to transform the data
@@ -958,9 +820,29 @@ ex:Nortec_1235 construction:hasTakeBackProgramFromOriginalManufacturer "true"^^<
 ex:acoustic_layer_1235 construction:hasTakeBackProgramFromOriginalManufacturer "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .
 ```
 
+The function `idlab-fn:equal` is so commonly used, that the YARRRML parser provides a shortcut for the function name and its parameters.
+
+Without shortcut:
+
+```yaml
+function: idlab-fn:equal
+parameters:
+  - [ grel:valueParameter, $(Take back program original manufacturer) ]
+  - [ grel:valueParameter2, YES ]
+```
+
+With shortcut:
+
+```yaml
+function: equal
+parameters:
+  - [ str1, $(Take back program original manufacturer) ]
+  - [ str2, YES ]
+```
+
 ## Complete YARRRML document
 
-The complete YARRRML document (also available as [mapping-1.yml](example-data/x-domain/lindner/mapping-1.yml)) is
+The complete YARRRML document (also available as [example-data/x-domain/lindner/tutorial_getting_started.yml](example-data/x-domain/lindner/tutorial_getting_started.yml)) is
 
 ```yaml
 prefixes:
@@ -979,17 +861,17 @@ mappings:
   products:
     graphs: ex:Products
     sources:
-      - [lindner_products-1.csv~csv]
-    s: ex:$(Product id)
+      - [tutorial_products.csv~csv]
+    s: ex:$(Product_id)
     po:
       - [ a, ceon-product:Product~iri ]
       - [ rdfs:label, $(Product Name) ]
       - p: construction:hasTakeBackProgramFromOriginalManufacturer
         o:
-          function: idlab-fn:equal
+          function: equal
           parameters:
-            - [ grel:valueParameter, $(Take back program original manufacturer) ]
-            - [ grel:valueParameter2, YES ]
+            - [ str1, $(Take back program original manufacturer) ]
+            - [ str2, YES ]
           datatype: xsd:boolean
       - [ e:minimumStockCount, $(Minimum stock count), xsd:integer ]
       - [ e:hasProductDescription, $(Product description), en~lang ]
@@ -999,60 +881,29 @@ mappings:
           condition:
             function: equal
             parameters:
-              - [str1, $(Product id), s]
-              - [str2, $(Measured_product), o]
-        g: ex:Dimensions
-      - p: ceon-quantity:hasWidth
-        o:
-          mapping: width
-          condition:
-            function: equal
-            parameters:
-              - [str1, $(Product id), s]
-              - [str2, $(Measured_product), o]
-        g: ex:Dimensions
-      - p: ceon-quantity:hasHeight
-        o:
-          mapping: height
-          condition:
-            function: equal
-            parameters:
-              - [str1, $(Product id), s]
+              - [str1, $(Product_id), s]
               - [str2, $(Measured_product), o]
         g: ex:Dimensions
   length:
     graphs: ex:Dimensions
     sources:
-      - ['lindner_products_dimensions-1.csv~csv']
+      - ['tutorial_products_dimensions.csv~csv']
     s:
       value: ex:$(Measured_product)-length
     po:
       - [ a, [ceon-quantity:Length~iri, qudt:QuantityValue~iri ] ]
       - [ qudt:numericValue, $(Length), xsd:double ]
       - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
-  width:
-    graphs: ex:Dimensions
-    sources:
-      - ['lindner_products_dimensions-1.csv~csv']
-    s:
-      value: ex:$(Measured_product)-width
-    po:
-      - [ a, [ceon-quantity:Width~iri, qudt:QuantityValue~iri ] ]
-      - [ qudt:numericValue, $(Width), xsd:double ]
-      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
-  height:
-    graphs: ex:Dimensions
-    sources:
-      - ['lindner_products_dimensions-1.csv~csv']
-    s:
-      value: ex:$(Measured_product)-height
-    po:
-      - [ a, [ceon-quantity:Height~iri, qudt:QuantityValue~iri ] ]
-      - [ qudt:numericValue, $(Height), xsd:double ]
-      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
 ```
 
-<!-- I AM HERE -->
+To tryout, execute:
+
+```bash
+# result serialized as nquads:
+./map.sh example-data/x-domain/lindner/tutorial_getting_started.yml
+# result serialized as turtle:
+./map.sh example-data/x-domain/lindner/tutorial_getting_started.yml turtle
+```
 
 ## Other data formats
 
@@ -1060,7 +911,7 @@ Besides CSV, it is also possible to generate Linked Data from existing data sour
 
 ### JSON
 
-Consider the following JSON file called "[lindner_products-dimensions-1.json](example-data/x-domain/lindner/lindner_products-dimensions-1.json)" that
+Consider the following JSON file called "[tutorial_products_dimensions.json](example-data/x-domain/lindner/tutorial_products_dimensions.json)" that
 represents the dimension data instead of a CSV file:
 
 ```json
@@ -1092,7 +943,7 @@ The corresponding rules (here shown for `length`) are:
 mappings:
   length:
     sources:
-      - access: lindner_products-dimensions-1.json
+      - access: tutorial_products_dimensions.json
         referenceFormulation: jsonpath
         iterator: "$.dimensions[*]"
 ```
@@ -1103,7 +954,7 @@ Here, we can also use a shortcut version:
 mappings:
   length:
     sources:
-      - [ lindner_products-dimensions-1.json~jsonpath, "$.dimensions[*]" ]
+      - [ tutorial_products_dimensions.json~jsonpath, "$.dimensions[*]" ]
 ```
 
 A second element is added to the array, which is the iterator.
@@ -1113,7 +964,7 @@ The same syntax will be used to refer to the different values inside the objects
 
 ### XML
 
-Consider the following XML file called "[lindner_products-dimensions-1.xml](example-data/x-domain/lindner/lindner_products-dimensions-1.xml)" that
+Consider the following XML file called "[tutorial_products_dimensions.xml](example-data/x-domain/lindner/tutorial_products_dimensions.xml)" that
 represents the dimension data instead of a CSV file:
 
 ```xml
@@ -1141,7 +992,7 @@ The corresponding rules are:
 mappings:
   length:
     sources:
-      - [ lindner_products-dimensions-1.xml~xpath, /dimensions/dimension ]
+      - [ tutorial_products_dimensions.xml~xpath, /dimensions/dimension ]
 ```
 
 ## Wrapping up
@@ -1165,5 +1016,3 @@ You can find more information in the following:
 * [YARRRML specification](https://w3id.org/yarrrml/spec)
 * [YARRRML website](https://w3id.org/yarrrml)
 * [YAML specification](http://yaml.org/spec/)
-
-This tutorial is an Onto-DESIDE-tuned walkthrough of [this generic toturial](https://rml.io/yarrrml/tutorial/getting-started/).
