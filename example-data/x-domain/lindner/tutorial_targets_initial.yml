@@ -1,0 +1,40 @@
+prefixes:
+  ceon-product: http://w3id.org/CEON/ontology/product/
+  ceon-quantity: http://w3id.org/CEON/ontology/quantity/
+  construction: http://w3id.org/CEON/demo/construction/
+  e: http://myontology.com/
+  ex: http://example.com/
+  qudt: http://qudt.org/schema/qudt/
+  qudt-quantitykind: http://qudt.org/vocab/quantitykind/
+  qudt-unit: http://qudt.org/vocab/unit/
+
+sources:
+  source-products: ['tutorial_products.csv~csv']
+  source-dimensions: ['tutorial_products_dimensions.csv~csv']
+
+mappings:
+  products:
+    sources:
+      - source-products
+    s: ex:$(Product_id)
+    po:
+      - [ a, ceon-product:Product~iri ]
+      - [ rdfs:label, $(Product Name) ]
+      - p: ceon-quantity:hasLength
+        o:
+          mapping: length
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(Product_id), s]
+              - [str2, $(Measured_product), o]
+
+  length:
+    sources:
+      - source-dimensions
+    s:
+      value: ex:$(Measured_product)-length
+    po:
+      - [ a, [ceon-quantity:Length~iri, qudt:QuantityValue~iri ] ]
+      - [ qudt:numericValue, $(Length), xsd:double ]
+      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]

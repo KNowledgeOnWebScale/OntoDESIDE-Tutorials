@@ -1,0 +1,74 @@
+prefixes:
+  acl: http://www.w3.org/ns/auth/acl#
+  ceon-product: http://w3id.org/CEON/ontology/product/
+  e: http://myontology.com/
+  ex: http://example.com/
+
+sources:
+  source-products: ['tutorial_products.csv~csv']
+  source-products-acl: ['tutorial_products_acl.csv~csv']
+
+targets:
+  target-products-data:
+    type: directhttprequest
+    access: http://localhost:3012/lindner/ltargets/products-data
+    serialization: turtle
+    authentication: auth1
+
+authentications:
+  auth1:
+    type: cssclientcredentials
+    email: lindner@example.com
+    password: abc123
+    webId: http://localhost:3012/lindner/profile/card#me
+    oidcIssuer: http://localhost:3012/
+
+mappings:
+  products:
+    sources:
+      - source-products
+    s:
+      value: ex:$(Product_id)
+      targets:
+        - target-products-data
+    po:
+      - [ a, ceon-product:Product~iri ]
+      - [ rdfs:label, $(Product Name) ]
+
+  products-acl:
+    sources:
+      - source-products-acl
+    s:
+      value: ex:acl_$(id_acl)
+    po:
+      - [ a, acl:Authorization~iri ]
+      - [ acl:accessTo, http://localhost:3012/lindner/ltargets/products-data~iri ]
+      - p: acl:mode
+        o: acl:Read~iri
+        condition:
+          function: equal
+          parameters:
+            - [ str1, $(read_access) ]
+            - [ str2, Yes ]
+      - p: acl:mode
+        o: acl:Write~iri
+        condition:
+          function: equal
+          parameters:
+            - [ str1, $(write_access) ]
+            - [ str2, Yes ]
+      - p: acl:mode
+        o: acl:Control~iri
+        condition:
+          function: equal
+          parameters:
+            - [ str1, $(control_access) ]
+            - [ str2, Yes ]
+      - p: acl:agent
+        o:
+          value: $(agent_webid)
+          type: iri
+      - p: acl:agentClass
+        o:
+          value: $(agent_class)
+          type: iri

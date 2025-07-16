@@ -10,5 +10,6 @@
 /rmlmapper*.jar
 /rmlmapper*version.txt
 *.testout
+out/
 /local-run/
 
