@@ -1,0 +1,3 @@
+﻿id_acl,read_access,write_access,control_access,agent_webid,agent_class
+0,Yes,Yes,Yes,http://localhost:3012/lindner/profile/card#me,
+1,Yes,No,No,,http://xmlns.com/foaf/0.1/Agent

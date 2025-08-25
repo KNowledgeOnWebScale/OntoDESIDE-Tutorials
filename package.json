@@ -1,0 +1,9 @@
+{
+  "name": "mapping-tutorial",
+  "version": "0.1.0",
+  "dependencies": {
+    "@rmlio/fetch-rmlmapper-java": "^0.1.0",
+    "@rmlio/yarrrml-parser": "1.11.0",
+    "@solid/community-server": "^7.1.6"
+  }
+}
