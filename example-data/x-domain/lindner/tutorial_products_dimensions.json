@@ -1,0 +1,16 @@
+{
+  "dimensions": [
+    {
+      "Measured_product": "Nortec_1234",
+      "Length": "600",
+      "Width": "600",
+      "Height": "45"
+    },
+    {
+      "Measured_product": "pedestal_1234",
+      "Length": "600",
+      "Width": "600",
+      "Height": "2000"
+    }
+  ]
+}

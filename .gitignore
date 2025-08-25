@@ -1,0 +1,15 @@
+# JetBrains IDE
+/.idea/
+
+# generated files
+/node_modules/
+/scripts/**/*.rml.ttl
+/scripts/**/*.out
+
+# temporary files and directories
+/rmlmapper*.jar
+/rmlmapper*version.txt
+*.testout
+out/
+/local-run/
+

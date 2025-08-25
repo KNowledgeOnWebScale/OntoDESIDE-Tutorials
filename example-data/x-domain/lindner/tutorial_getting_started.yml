@@ -1,0 +1,47 @@
+prefixes:
+  ceon-product: http://w3id.org/CEON/ontology/product/
+  ceon-quantity: http://w3id.org/CEON/ontology/quantity/
+  construction: http://w3id.org/CEON/demo/construction/
+  e: http://myontology.com/
+  ex: http://example.com/
+  qudt: http://qudt.org/schema/qudt/
+  qudt-quantitykind: http://qudt.org/vocab/quantitykind/
+  qudt-unit: http://qudt.org/vocab/unit/
+
+mappings:
+  products:
+    graphs: ex:Products
+    sources:
+      - [tutorial_products.csv~csv]
+    s: ex:$(Product_id)
+    po:
+      - [ a, ceon-product:Product~iri ]
+      - [ rdfs:label, $(Product Name) ]
+      - p: construction:hasTakeBackProgramFromOriginalManufacturer
+        o:
+          function: equal
+          parameters:
+            - [ str1, $(Take back program original manufacturer) ]
+            - [ str2, YES ]
+          datatype: xsd:boolean
+      - [ e:minimumStockCount, $(Minimum stock count), xsd:integer ]
+      - [ e:hasProductDescription, $(Product description), en~lang ]
+      - p: ceon-quantity:hasLength
+        o:
+          mapping: length
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(Product_id), s]
+              - [str2, $(Measured_product), o]
+        g: ex:Dimensions
+  length:
+    graphs: ex:Dimensions
+    sources:
+      - ['tutorial_products_dimensions.csv~csv']
+    s:
+      value: ex:$(Measured_product)-length
+    po:
+      - [ a, [ceon-quantity:Length~iri, qudt:QuantityValue~iri ] ]
+      - [ qudt:numericValue, $(Length), xsd:double ]
+      - [ qudt:hasUnit, qudt-unit:MilliM~iri ]
