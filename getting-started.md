@@ -57,7 +57,7 @@ by manually writing YARRRML rules.
 We assume that you understand Linked Data and more specific the
 [Resource Description Framework](https://www.w3.org/TR/rdf11-concepts/) (RDF).
 However, the basic concepts of RDF are explained in this tutorial.
-We assume the concepts of vocabularies and ontologies, such as classes, properties, and datatypes.
+We assume the concepts of vocabularies and ontologies, such as classes, properties, and datatypes, are known.
 
 ### How to use the tutorial
 
@@ -98,8 +98,7 @@ A literal consists of two or three elements:
 
 * a lexical form, for example, "John"
 * a datatype IRI, for example, `http://www.w3.org/2001/XMLSchema#string`
-* if and only if the datatype IRI is `http://www.w3.org/1999/02/22-rdf-syntax-ns#langString`,
-* a non-empty language tag, for example, "en"
+* if and only if the datatype IRI is `http://www.w3.org/1999/02/22-rdf-syntax-ns#langString`: a non-empty language tag, for example, "en"
 
 Blank nodes are disjoint from IRIs and literals.
 Unlike IRIs and literals, blank nodes do not identify specific resources.
@@ -327,7 +326,7 @@ mappings:
 The value `ex:$(Product_id)` states that the prefix `ex` is concatenated with the value of the column "Product_id".
 The use of `$(...)` allows to use values of the data sources.
 In this case, we can refer to values in the different columns.
-This specific rule results in the following IRIs as subjects for the products: `ex:0`, `ex:1`, `ex:2`, `ex:3`, and `ex:4`.
+This specific rule results in the following IRIs as subjects for the products: `ex:Nortec_1234`, `ex:tile_1234`, `ex:pedestal_1234`, `ex:pedestal_glue_1234`, `ex:Nortec_1235` and `ex:acoustic_layer_1235`.
 
 ## How to generate predicates and objects
 
@@ -433,6 +432,18 @@ Next, we define that every product is annotated with a take back indicator,
 which can be found in the column "Take back program original manufacturer",
 via `construction:hasTakeBackProgramFromOriginalManufacturer`.
 This is done by adding `[ construction:hasTakeBackProgramFromOriginalManufacturer, $(Take back program original manufacturer) ]` to `po`.
+
+```yaml
+mappings:
+  products:
+    sources:
+      - ['tutorial_products.csv~csv']
+    s: ex:$(Product_id)
+    po:
+      - [a, ceon-product:Product]
+      - [rdfs:label, $(Product Name)]
+      - [construction:hasTakeBackProgramFromOriginalManufacturer, $(Take back program original manufacturer) ]
+```
 
 The following triples are generated using these rules.
 
@@ -621,8 +632,6 @@ po:
           - [str2, $(Measured_product), o]
 ```
 
-We are not able to use the shortcut/array notation to define the predicate and object.
-
 `p: ceon-quantity:hasLength` states that we want to use the predicate `ceon-quantity:hasLength`.
 
 `mapping: length` states that we want to create a link between the products and the episodes,
@@ -652,7 +661,7 @@ ex:pedestal_1234 ceon-quantity:hasLength ex:pedestal_1234-length .
 ```
 
 > Note that for `ex:tile_1234`, `ex:pedestal_glue_1234`, `ex:Nortec_1235` and `ex:acoustic_layer_1235` no triple is generated
-> as lengths for these products is not provided.
+> as lengths for these products are not provided.
 
 ## How to add triples to a graph
 
@@ -678,16 +687,14 @@ The following quads are generated for the first product.
 ex:Nortec_1234 a ceon-product:Product ex:Products .
 ex:Nortec_1234 e:hasProductDescription "fibre-reinforced calcium sulphate panel, (...)"@en ex:Products .
 ex:Nortec_1234 e:minimumStockCount "100"^^<http://www.w3.org/2001/XMLSchema#integer> ex:Products .
-ex:Nortec_1234 ceon-quantity:hasLength ex:Nortec_1234-length> ex:Products .
+ex:Nortec_1234 ceon-quantity:hasLength ex:Nortec_1234-length ex:Products .
 ```
 
 ### How to add po-specific triples to a graph
 
 We need to add po-specific triples about products to the graph `ex:Dimensions`.
 More specific, all triples that are related to dimensions should be in a separate graph.
-This is done by adding the key
-[`graphs`](https://w3id.org/yarrrml/spec/#all-triples-with-a-specific-predicate-and-object) sixth, seventh and
-eighth element of `po` in the mapping `products,
+This is done by adding the key [`graphs`](https://w3id.org/yarrrml/spec/#all-triples-with-a-specific-predicate-and-object) to the sixth element of `po` in the mapping `products,
 together with the corresponding value that defines the graph.
 
 We also added `graphs: ex:Dimensions` to the mapping `length`,
@@ -729,7 +736,7 @@ so expand the array-based notation if needed.
 
 > Note that `g` is a shortcut for `graphs`.
 
-The following quads are generated for the first product.
+For the first product, the following extra quads are generated in the graph ´ex:Dimensions`.
 
 ```turtle
 ex:Nortec_1234 ceon-quantity:hasLength ex:Nortec_1234-length ex:Dimensions .
