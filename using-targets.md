@@ -461,7 +461,7 @@ The contents of the files `products.ttl` and `products-gz.ttl` are identical and
 ## How to output to web resources
 
 > From this point on, executing the example mappings requires that our supporting Community Solid Server (CSS) is up and running,
-> as explained in [here in the README](README.md#http-output).
+> as explained [here in the README](README.md#http-output).
 
 In our example,
 we don't only need to output RDF to local files,

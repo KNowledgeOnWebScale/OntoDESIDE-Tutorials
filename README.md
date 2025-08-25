@@ -13,8 +13,6 @@ If you just want to read content, visit the parts of this tutorial in this order
 
 If you want to try out yourself some of the mappings in above content, continue below.
 
-See also the 
-
 ## The working environment
 
 We provide:
@@ -39,7 +37,7 @@ We added new mapping files for the tutorial. We'll meet them one by one while wa
 They all have file names matching `example-data/x-domain/lindner/tutorial_*.yml`.
 
 For didactical reasons, we simplified some Lindner data and added some imaginary data.
-All data files used in the mappings files of the tutorial have file names matching `example-data/x-domain/lindner/tutorial_*.csv`.
+All data files used in the mapping files of the tutorial have file names matching `example-data/x-domain/lindner/tutorial_*.csv`.
 
 ### About the data on the CSS
 
